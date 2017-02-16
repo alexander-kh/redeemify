@@ -1,4 +1,5 @@
 class Provider < ActiveRecord::Base
+	include Offeror
 	has_many :redeemifyCodes
 
   before_create :defaultValue
