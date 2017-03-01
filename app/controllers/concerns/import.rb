@@ -5,13 +5,13 @@ module Import
 
   def home
     @histories_array = []
-    if current_offeror.history != nil
+    if current_offeror.history.present?
       @histories_array = Offeror.home_set(current_offeror.history)
     end
 
     @hash = { "uploaded" => current_offeror.uploadedCodes,
               "used" => current_offeror.usedCodes,
-              "unclaim" => current_offeror.unclaimCodes,
+              "unclaimed" => current_offeror.unclaimCodes,
               "removed" => current_offeror.removedCodes }
 
     gon.codes = @hash
@@ -46,9 +46,21 @@ module Import
       redirect_to "/#{params[:controller]}/home",
         :flash => { :error => "There are no unclaimed codes" }
     else
-      contents = Offeror.remove_unclaimed_codes(current_offeror)
-      send_data contents, :filename => "unclaimed_codes.txt"
+      # contents = Offeror.remove_codes(current_offeror)
+      # send_data contents, :filename => "unclaimed_codes.txt"
+      Offeror.remove_codes(current_offeror)
+      redirect_to "/#{params[:controller]}/home",
+        :flash => { :notice => "Codes were removed" }
     end
+  end
+  
+  def download_codes
+    unclaimed_codes = Offeror.download_codes(current_offeror)
+    send_data(unclaimed_codes, filename: "unclaimed_codes.txt")
+  end
+  
+  def view_codes
+    @offeror_codes = offeror_codes.all
   end
 
   def clear_history

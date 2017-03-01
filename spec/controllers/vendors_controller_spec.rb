@@ -3,23 +3,20 @@ require 'rails_helper'
  
 describe VendorsController do
 
-  describe "#home" do
-    render_views  
-    it "renders the about template" do
+  describe "GET #home" do
+    render_views
+  
+    it "renders profile, upload_page and view_codes templates" do
       expect(session[:vendor_id]).to be_nil
-
       v = Vendor.create :name => "thai" , :uid => "54321", :provider => "amazon"
-      v.history = "April 3rd, 2015 23:51\tCode Description\t2\n"
+      v.history = "April 3rd, 2015 23:51\tComment\t5\n"
       v.save!
-
       session[:vendor_id] = v.id
       expect(session[:vendor_id]).not_to be_nil
-      get 'profile' # or :new
+      get 'profile'
       expect(response).to render_template :profile
-
       get 'upload_page'
       expect(response).to render_template :upload_page
-
       get 'view_codes'
       expect(response).to render_template :view_codes
     end
@@ -29,52 +26,51 @@ describe VendorsController do
       allow(controller).to receive(:current_vendor).and_return(amazon)
       get :home
       expect(response).to render_template(:home)
-      expect(response.body).to match(/Amazon Oauth/i)
-    end
-
-  end
-
-  describe "#edit" do
-     it "renders the about template" do
-        get :edit
-        expect(response).to render_template :edit
+      expect(response.body).to match(/amazon_oauth2/i)
     end
   end
 
-  describe "#index" do
-     it "renders the about template" do
-        get 'index' # or :new
-        expect(response).to render_template :index
+  describe "GET #edit" do
+    it "renders edit template" do
+      get :edit
+      expect(response).to render_template :edit
     end
   end
 
-  describe "#upload_page" do
+  describe "GET #index" do
+    it "renders index template" do
+      get 'index'
+      expect(response).to render_template :index
+    end
+  end
+
+  describe "GET #upload_page" do
     render_views
-    it "renders the upload page with the vendor's provider" do
+    it "renders the upload page with the vendor provider" do
       amazon = FactoryGirl.create(:vendor)
       allow(controller).to receive(:current_vendor).and_return(amazon)
       get :upload_page
       expect(response).to render_template(:upload_page)
-      expect(response.body).to match(/Amazon Oauth/i)
+      expect(response.body).to match(/amazon_oauth2/i)
     end
   end
   
-  describe "#profile" do
+  describe "GET #profile" do
     render_views
-    it "renders the profile page with vendor's expiration, description, helpLink, instruction" do
+    it "renders the profile page" do
       amazon = FactoryGirl.create(:vendor)
       allow(controller).to receive(:current_vendor).and_return(amazon)
       get :profile
       expect(response).to render_template(:profile)
       
-      expect(response.body).to match(/MyExpiration/)
-      expect(response.body).to match(/MyDescription/)
-      expect(response.body).to match(/MyHelpLink/)
-      expect(response.body).to match(/MyInstruction/)      
+      expect(response.body).to match("01/27/2015")
+      expect(response.body).to match("AWS credit")
+      expect(response.body).to match("https://aws.amazon.com/uk/awscredits/")
+      expect(response.body).to match("Follow the page and redeem credit")
     end
   end
 
-  describe "#import" do
+  describe "POST #import" do
     render_views
     before do
       @hash = {err_codes: 0, submitted_codes: 5}
@@ -108,5 +104,76 @@ describe VendorsController do
       expect(controller).to receive(:send_data).with(content, file) {controller.render nothing: true}
       post :import, file: !nil
     end  
+  end
+  
+  describe "POST #update_profile" do
+    before do
+      @vendor = create(:vendor)
+    end
+    it "updates vendor profile" do
+      expect(@vendor.cashValue).to eq("$10")
+      allow(controller).to receive(:current_vendor).and_return(@vendor)
+      post :update_profile, cash_value: "$15"
+      expect(@vendor.cashValue).to eq("$15")
+      expect(response).to redirect_to(:vendors_home)
+      expect(flash[:notice]).to eq("Profile updated")
+    end
+  end
+  
+  describe "GET #remove_codes" do
+    before do
+      @vendor = create(:vendor)
+      create_list(:vendor_code, 5, vendor_id: @vendor.id)
+      @vendor.unclaimCodes = 5
+    end
+    it "removes unclaimed codes" do
+      expect(@vendor.unclaimCodes).to eq(5)
+      allow(controller).to receive(:current_vendor).and_return(@vendor)
+      get :remove_codes
+      expect(@vendor.unclaimCodes).to eq(0)
+      expect(response).to redirect_to(:vendors_home)
+      expect(flash[:notice]).to eq("Codes were removed")
+    end
+  end
+  
+  describe "GET #download_code" do
+    before do
+      @vendor = create(:vendor)
+      create_list(:vendor_code, 5, vendor_id: @vendor.id)
+    end
+    it "downloads unclaimed codes" do
+      unclaimed_codes = "unclaimed_codes"
+      file = {filename: "unclaimed_codes.txt"}
+      allow(controller).to receive(:current_vendor).and_return(@vendor)
+      allow(Offeror).to receive(:download_codes).and_return(unclaimed_codes)
+      expect(controller).to receive(:send_data).
+        with(unclaimed_codes, file) {controller.render nothing: true}
+      get :download_codes
+    end
+  end
+  
+  describe "GET #view_codes" do
+    before do
+      @vendor = create(:vendor)
+    end
+    it "renders view_codes template" do
+      allow(controller).to receive(:current_vendor).and_return(@vendor)
+      get :view_codes
+      expect(response).to render_template(:view_codes)
+    end
+  end
+  
+  describe "GET #clear_history" do
+    before do
+      @vendor = create(:vendor)
+    end
+    it "clears history" do
+      expect(@vendor.history).to eq("History")
+      allow(controller).to receive(:current_vendor).and_return(@vendor)
+      get :clear_history
+      expect(@vendor.history).to be_nil
+      expect(response).to redirect_to(:vendors_home)
+      expect(flash[:notice]).to eq("History was cleared")
+    end
   end
 end

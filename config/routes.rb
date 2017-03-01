@@ -37,6 +37,7 @@ Auth::Application.routes.draw do
   get 'providers/edit'
   get 'providers/upload_page'
   get 'providers/clear_history'
+  get 'providers/view_codes'
 
   match "/auth/:provider/callback", to: "sessions#create", via: [:get, :post]
   match "/auth/failure", to: "sessions#failure", via: [:get, :post]
@@ -54,6 +55,7 @@ Auth::Application.routes.draw do
       post :import
       post :update_profile
       get :remove_codes
+      get :download_codes
     end
     resources :vendorcodes
   end
@@ -63,6 +65,7 @@ Auth::Application.routes.draw do
       post :import
       post :update_profile
       get :remove_codes
+      get :download_codes
     end
     resources :redeemifycodes
   end

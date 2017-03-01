@@ -33,11 +33,11 @@ module Offeror
 		return serialize_errors
 	end
 	
-	def self.remove_unclaimed_codes(current)
+	def self.remove_codes(current)
 		if current.class == Vendor
-			unclaimedCodes = current.vendorCodes.where(:user_id => nil)
+			unclaimed_codes = current.vendorCodes.where(:user_id => nil)
 		else
-			unclaimedCodes = current.redeemifyCodes.where(:user_id => nil)
+			unclaimed_codes = current.redeemifyCodes.where(:user_id => nil)
 		end
 		
 		num = current.unclaimCodes
@@ -48,7 +48,7 @@ module Offeror
 		current.update_attribute(:history, history)
 		
 		contents = "There are #{num} unclaimed codes, removed on #{date}\r\n\r\n"
-		unclaimedCodes.each do |code|
+		unclaimed_codes.each do |code|
 			contents = "#{contents}#{code.code}\r\n"
 			code.destroy
   	end
@@ -57,6 +57,22 @@ module Offeror
   	
   	return contents
 	end
+	
+  def self.download_codes(current)
+    if current.class == Vendor
+      unclaimed_codes = current.vendorCodes.where(:user_id => nil)
+    else
+      unclaimed_codes = current.redeemifyCodes.where(:user_id => nil)
+    end
+    
+    # num = current.unclaimCodes
+    num = unclaimed_codes.count
+    contents = "There are #{num} unclaimed codes:\r\n\r\n"
+    unclaimed_codes.each do |code|
+      contents = "#{contents}#{code.code}\r\n"
+    end
+    return contents
+  end
 	
 	def self.home_set(histories)
 		histories = histories.split(/\n/)

@@ -10,18 +10,14 @@ class VendorsController < ApplicationController
   def profile
   end
   
-  def view_codes
-    @vendor_codes = current_vendor.vendorCodes.all
-  end
-
   def update_profile
     @info = {}
-    cash = params[:cashValue]
+    cash = params[:cash_value]
     cash = cash.gsub(/\s+/, "")
     @info["cashValue"] = cash
     @info["instruction"] = params[:instruction]
     @info["description"] = params[:description]
-    @info["helpLink"] = params[:helpLink]
+    @info["helpLink"] = params[:help_link]
     @info["expiration"] = params[:expiration]
     Vendor.update_profile_vendor(current_vendor, @info)
     redirect_to '/vendors/home', notice: "Profile updated"

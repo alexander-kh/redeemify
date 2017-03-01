@@ -94,9 +94,13 @@ When /^(?:|I )follow the link to (.*)$/ do |action|
     when 'log in as a vendor'
       click_link('vendor-login')
     when 'remove codes'
-      click_link('remove-unclaimed-codes')
+      click_link('remove_unclaimed_codes')
     when 'clear history'
-      click_link('clear-history')
+      click_link('clear_history')
+    when 'view uploaded codes'
+      click_link('view_codes')
+    when 'download unclaimed codes'
+      click_link('download_codes')
   end
 end
 

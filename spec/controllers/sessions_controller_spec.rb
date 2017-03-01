@@ -118,7 +118,7 @@ describe SessionsController do
 
         get 'delete_account'
         expect(response).to redirect_to root_url
-        expect(flash[:notice]).to eq("Your account has been deleted.")
+        expect(flash[:notice]).to eq("Your account has been deleted")
     end
   end  
 
