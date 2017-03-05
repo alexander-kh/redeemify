@@ -15,7 +15,6 @@ config/application.yml
 .tool-versions
 
 # Code Climate configuration files
-codeclimate-config.patch
 .codeclimate.yml
 .csslintrc
 .eslintignore
