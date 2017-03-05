@@ -45,3 +45,5 @@ exclude_paths:
 - script/
 - spec/
 - vendor/
+- lib/tasks/cucumber.rake
+- app/assets/javascripts/sessions.js.coffee

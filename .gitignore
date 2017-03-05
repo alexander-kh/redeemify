@@ -14,3 +14,13 @@ config/application.yml
 .rvmrc
 .tool-versions
 
+# Code Climate configuration files
+codeclimate-config.patch
+.codeclimate.yml
+.csslintrc
+.eslintignore
+.eslintrc.yml
+.rubocop.yml
+coffeelint.json
+
+.travis.yml
