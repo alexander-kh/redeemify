@@ -4,10 +4,7 @@ module Import
   end
 
   def home
-    @histories_array = []
-    if current_offeror.history.present?
-      @histories_array = Offeror.home_set(current_offeror.history)
-    end
+    @histories_array = Offeror.home_set(current_offeror.history)
 
     @hash = { "uploaded" => current_offeror.uploadedCodes,
               "used" => current_offeror.usedCodes,
@@ -23,8 +20,7 @@ module Import
       redirect_to "/#{params[:controller]}/upload_page", 
         :flash => { :error => "You have not selected a file to upload" }
     else
-      import_status = Offeror.import(params[:file], current_offeror,
-                    params[:comment])
+      import_status = current_offeror.import(params[:file], params[:comment])
       fail_codes = import_status[:err_codes]
       if import_status[:err_file]
         flash[:error] = import_status[:err_file]

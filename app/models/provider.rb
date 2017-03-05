@@ -2,9 +2,9 @@ class Provider < ActiveRecord::Base
 	include Offeror
 	has_many :redeemifyCodes
 
-  before_create :defaultValue
+  before_create :default_value
 
-	def defaultValue
+	def default_value
 		self.usedCodes = 0
 		self.uploadedCodes = 0
 		self.unclaimCodes = 0

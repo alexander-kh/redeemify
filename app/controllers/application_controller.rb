@@ -18,20 +18,16 @@ private
     @vendor ||= Vendor.find(session[:vendor_id]) if session[:vendor_id]
   end
   
+  def provider?
+    params[:controller] == "providers"
+  end
+  
   def current_offeror
-    if params[:controller] == "providers"
-      current_provider
-    else
-      current_vendor
-    end
+    provider? ? current_provider : current_vendor
   end
   
   def offeror_codes
-    if params[:controller] == "providers"
-      current_provider.redeemifyCodes
-    else
-      current_vendor.vendorCodes
-    end
+    provider? ? current_provider.redeemifyCodes : current_vendor.vendorCodes
   end
   
   def validation_errors_content(err_hash)

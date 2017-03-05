@@ -1,115 +1,97 @@
 module Offeror
 
-	def self.import(file, current, comment)
- 		serialize_errors, serialized_codes = {submitted_codes: 0}, 0
- 		serialize_errors[:err_file] = file_check(file.path)
- 		return serialize_errors if serialize_errors[:err_file]
- 		f = File.open(file.path, "r")
- 			f.each_line do |row|
- 				row = row.gsub(/\s+/, "") # eliminate spaces in a row
- 				if row != ""   # don't get any blank code
-          serialize_errors[:submitted_codes] += 1
-          begin
-            a = add_code(current, row)
-            a.save!
-            serialized_codes += 1
-          rescue
-            err_str = a.errors[:code].join(', ')
-            serialize_errors[err_str] ||= []
-            serialize_errors[err_str] << a.code
-          end
-            serialize_errors[:err_codes] =
-              serialize_errors[:submitted_codes] - serialized_codes
-				end
-			end
-		f.close
-		
-		@serialized_codes = serialized_codes
-		@comment = comment
-		update_history(current)
-		current.update_attribute(:uploadedCodes, current.uploadedCodes + serialized_codes)
-		current.update_attribute(:unclaimCodes, current.unclaimCodes + serialized_codes)
-		
-		return serialize_errors
-	end
-	
-	def self.remove_codes(current)
-		if current.class == Vendor
-			unclaimed_codes = current.vendorCodes.where(:user_id => nil)
-		else
-			unclaimed_codes = current.redeemifyCodes.where(:user_id => nil)
-		end
-		
-		num = current.unclaimCodes
-		date = Time.now.to_formatted_s(:long_ordinal)
-		
-		history = current.history
-		history = "#{history}#{date}\tCodes was removed\t-#{num}\n"
-		current.update_attribute(:history, history)
-		
-		contents = "There are #{num} unclaimed codes, removed on #{date}\r\n\r\n"
-		unclaimed_codes.each do |code|
-			contents = "#{contents}#{code.code}\r\n"
-			code.destroy
-  	end
-  	current.update_attribute(:unclaimCodes, 0)
-  	current.update_attribute(:removedCodes, current.removedCodes + num)
-  	
-  	return contents
-	end
-	
-  def self.download_codes(current)
-    if current.class == Vendor
-      unclaimed_codes = current.vendorCodes.where(:user_id => nil)
+  def self.home_set(histories)
+    if histories.blank?
+      return []
     else
-      unclaimed_codes = current.redeemifyCodes.where(:user_id => nil)
+      histories = histories.split(/\n/)
+      histories_array = []
+      histories.each do |history|
+        temp = history.split(/\t/)
+        histories_array.push(temp)
+      end
+      histories_array.reverse!
+      return histories_array
+    end
+  end
+
+  def import(file, comment)
+    @processed_codes, @approved_codes = {submitted_codes: 0}, 0
+    @processed_codes[:err_file] = file_check(file.path)
+    return @processed_codes if @processed_codes[:err_file]
+    
+    process_codes(file)
+    
+    update_history(comment)
+    
+    return @processed_codes
+  end
+  
+  def remove_unclaimed_codes(offeror_codes)
+    @unclaimed_codes = offeror_codes.where(user_id: nil)
+    @num = self.unclaimCodes
+    @date = Time.now.to_formatted_s(:long_ordinal)
+    @contents = "There are #{@num} unclaimed codes, removed on #{@date}\r\n\r\n"
+    @unclaimed_codes.each do |code|
+      @contents = "#{@contents}#{code.code}\r\n"
+      code.destroy
     end
     
-    # num = current.unclaimCodes
-    num = unclaimed_codes.count
-    contents = "There are #{num} unclaimed codes:\r\n\r\n"
-    unclaimed_codes.each do |code|
-      contents = "#{contents}#{code.code}\r\n"
-    end
-    return contents
+    comment = "Codes were removed"
+    update_history(comment)
+
+    self.update(unclaimCodes: 0, removedCodes: self.removedCodes + @num)
+    return @contents
   end
-	
-	def self.home_set(histories)
-		histories = histories.split(/\n/)
-		histories_array = []
-		histories.each do |history|
-			temp = history.split(/\t/)
-			histories_array.push(temp)
-		end
-		histories_array.reverse!
-		return histories_array
-	end
-	
-	private
-	
-  def self.add_code(offeror, code)
-    if offeror.class == Vendor
-      offeror.vendorCodes.build(:code => code, :name => offeror.name,
-        :vendor => offeror)
+  
+  private
+  
+  def file_check(file_path)
+    return "Wrong file format! Please upload '.txt' file" unless file_path =~/.txt$/
+    return "No codes detected! Please check your upload file" if File.zero? file_path
+  end
+
+  def process_codes(file)
+    f = File.open(file.path, "r")
+      f.each_line do |row|
+        row = row.gsub(/\s+/, "")
+        unless row.empty?
+          @processed_codes[:submitted_codes] += 1
+          begin
+            a = add_code(row)
+            a.save!
+            @approved_codes += 1
+          rescue
+            err_str = a.errors[:code].join(', ')
+            @processed_codes[err_str] ||= []
+            @processed_codes[err_str] << a.code
+          end
+          @processed_codes[:err_codes] =
+            @processed_codes[:submitted_codes] - @approved_codes
+        end
+      end
+    f.close
+    self.update(uploadedCodes: self.uploadedCodes + @approved_codes,
+      unclaimCodes: self.unclaimCodes + @approved_codes)
+  end
+
+  def add_code(code)
+    if self.is_a? Vendor 
+      self.vendorCodes.build(code: code, name: self.name, vendor: self)
     else
-      offeror.redeemifyCodes.build(:code => code, :name => offeror.name,
-        :provider => offeror)
+      self.redeemifyCodes.build(code: code, name: self.name,
+        provider: self)
     end
   end
-  
-  def self.update_history(offeror)
-		history = offeror.history
-		date = Time.now.to_formatted_s(:long_ordinal)
-		if history == nil
-			history = "#{date}\t#{@comment}\t#{@serialized_codes}\n"
-		else
-			history = "#{history}#{date}\t#{@comment}\t#{@serialized_codes}\n"
-		end
-		offeror.update_attribute(:history, history)
-  end
-  
-  def self.file_check(file_path)
-		return "Wrong file format! Please upload '.txt' file" unless file_path =~/.txt$/
-		return "No codes detected! Please check your upload file" if File.zero? file_path
+
+  def update_history(comment)
+    history = self.history
+    date = Time.now.to_formatted_s(:long_ordinal)
+    if history.nil?
+      history = "#{date}\t#{comment}\t#{@approved_codes}\n"
+    else
+      history = "#{history}#{date}\t#{comment}\t#{@approved_codes}\n"
+    end
+    self.update_attribute(:history, history)
   end
 end

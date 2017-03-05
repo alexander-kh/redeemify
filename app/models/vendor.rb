@@ -1,10 +1,10 @@
 class Vendor < ActiveRecord::Base
 	include Offeror
 	has_many :vendorCodes
-
-	before_create :defaultValue
-
-	def defaultValue
+	
+	before_create :default_value
+	
+	def default_value
 		self.usedCodes = 0
 		self.uploadedCodes = 0
 		self.unclaimCodes = 0

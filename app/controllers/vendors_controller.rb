@@ -10,6 +10,10 @@ class VendorsController < ApplicationController
   def profile
   end
   
+  def view_codes
+    @vendor_codes = current_vendor.vendorCodes.all
+  end
+  
   def update_profile
     @info = {}
     cash = params[:cash_value]
