@@ -93,13 +93,22 @@ describe ProvidersController do
   describe "GET #remove_unclaimed_codes" do
     before do
       @provider = create(:provider)
-      create_list(:redeemify_code, 5, provider_id: @provider.id)
-      @provider.unclaimCodes = 5
+    end
+    it "displays the error message when there are no unclaimed codes" do
+      @provider.unclaimCodes = 0
+      allow(controller).to receive(:current_provider).and_return(@provider)
+      get :remove_unclaimed_codes
+      expect(response).to redirect_to(:providers_home)
+      expect(flash[:error]).to eq("There are no unclaimed codes")
     end
     it "removes unclaimed codes" do
+      create_list(:redeemify_code, 5, provider_id: @provider.id)
+      @provider.unclaimCodes = 5
+      expect(@provider.redeemifyCodes.count).to eq(5)
       expect(@provider.unclaimCodes).to eq(5)
       allow(controller).to receive(:current_provider).and_return(@provider)
       get :remove_unclaimed_codes
+      expect(@provider.redeemifyCodes.count).to eq(0)
       expect(@provider.unclaimCodes).to eq(0)
       expect(response).to redirect_to(:providers_home)
       expect(flash[:notice]).to eq("Codes were removed")
@@ -136,6 +145,13 @@ describe ProvidersController do
   describe "GET #clear_history" do
     before do
       @provider = create(:provider)
+    end
+    it "displayes the error message when history is empty" do
+      @provider.history = nil
+      allow(controller).to receive(:current_provider).and_return(@provider)
+      get :clear_history
+      expect(response).to redirect_to(:providers_home)
+      expect(flash[:error]).to eq("History is empty")
     end
     it "clears history" do
       expect(@provider.history).to eq("History")

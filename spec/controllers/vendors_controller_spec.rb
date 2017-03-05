@@ -128,13 +128,22 @@ describe VendorsController do
   describe "GET #remove_unclaimed_codes" do
     before do
       @vendor = create(:vendor)
-      create_list(:vendor_code, 5, vendor_id: @vendor.id)
-      @vendor.unclaimCodes = 5
+    end
+    it "displays the error message when there are no unclaimed codes" do
+      @vendor.unclaimCodes = 0
+      allow(controller).to receive(:current_vendor).and_return(@vendor)
+      get :remove_unclaimed_codes
+      expect(response).to redirect_to(:vendors_home)
+      expect(flash[:error]).to eq("There are no unclaimed codes")
     end
     it "removes unclaimed codes" do
+      create_list(:vendor_code, 5, vendor_id: @vendor.id)
+      @vendor.unclaimCodes = 5
+      expect(@vendor.vendorCodes.count).to eq(5)
       expect(@vendor.unclaimCodes).to eq(5)
       allow(controller).to receive(:current_vendor).and_return(@vendor)
       get :remove_unclaimed_codes
+      expect(@vendor.vendorCodes.count).to eq(0)
       expect(@vendor.unclaimCodes).to eq(0)
       expect(response).to redirect_to(:vendors_home)
       expect(flash[:notice]).to eq("Codes were removed")
@@ -171,6 +180,13 @@ describe VendorsController do
   describe "GET #clear_history" do
     before do
       @vendor = create(:vendor)
+    end
+    it "displays the error message when history is empty" do
+      @vendor.history = nil
+      allow(controller).to receive(:current_vendor).and_return(@vendor)
+      get :clear_history
+      expect(response).to redirect_to(:vendors_home)
+      expect(flash[:error]).to eq("History is empty")
     end
     it "clears history" do
       expect(@vendor.history).to eq("History")
