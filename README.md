@@ -1,6 +1,5 @@
-[![Code Climate](https://codeclimate.com/github/strawberrycanyon/redeemify/badges/gpa.svg)](https://codeclimate.com/github/strawberrycanyon/redeemify)
-[![Issue Count](https://codeclimate.com/github/strawberrycanyon/redeemify/badges/issue_count.svg)](https://codeclimate.com/github/strawberrycanyon/redeemify)
-<a href="https://travis-ci.org/strawberrycanyon/redeemify"><img src="https://travis-ci.org/strawberrycanyon/redeemify.svg?branch=master"></a>
+[![Code Climate](https://codeclimate.com/github/alexander-kh/redeemify/badges/gpa.svg)](https://codeclimate.com/github/alexander-kh/redeemify)
+[![Issue Count](https://codeclimate.com/github/alexander-kh/redeemify/badges/issue_count.svg)](https://codeclimate.com/github/alexander-kh/redeemify)
 
 # Redeemify: let users redeem "bundles" of offers
 
