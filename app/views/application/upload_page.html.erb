@@ -17,7 +17,7 @@
   </div>
 
   <div class="upload_codes">
-    <%= file_field_tag :file %> 
+    <%= file_field_tag :file %>
   </div>
   
   <div class="upload_comment">
@@ -26,5 +26,5 @@
   
   <%= text_area_tag :comment, nil, rows: 5, cols: 50 %>
   
-  <%= submit_tag "Submit", class: "submit" %>
+  <%= submit_tag "Submit", id: "submit" %>
 <% end %>

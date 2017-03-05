@@ -90,7 +90,7 @@ describe ProvidersController do
     end  
   end
   
-  describe "GET #remove_codes" do
+  describe "GET #remove_unclaimed_codes" do
     before do
       @provider = create(:provider)
       create_list(:redeemify_code, 5, provider_id: @provider.id)
@@ -99,7 +99,7 @@ describe ProvidersController do
     it "removes unclaimed codes" do
       expect(@provider.unclaimCodes).to eq(5)
       allow(controller).to receive(:current_provider).and_return(@provider)
-      get :remove_codes
+      get :remove_unclaimed_codes
       expect(@provider.unclaimCodes).to eq(0)
       expect(response).to redirect_to(:providers_home)
       expect(flash[:notice]).to eq("Codes were removed")
@@ -115,7 +115,7 @@ describe ProvidersController do
       unclaimed_codes = "unclaimed codes"
       file = {filename: "unclaimed_codes.txt"}
       allow(controller).to receive(:current_provider).and_return(@provider)
-      allow(Offeror).to receive(:download_codes).and_return(unclaimed_codes)
+      allow(@provider).to receive(:download_codes).and_return(unclaimed_codes)
       expect(controller).to receive(:send_data).
         with(unclaimed_codes, file) {controller.render nothing: true}
       get :download_codes

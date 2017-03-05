@@ -93,7 +93,7 @@ When /^(?:|I )follow the link to (.*)$/ do |action|
       click_link('user-login')
     when 'log in as a vendor'
       click_link('vendor-login')
-    when 'remove codes'
+    when 'remove unclaimed codes'
       click_link('remove_unclaimed_codes')
     when 'clear history'
       click_link('clear_history')

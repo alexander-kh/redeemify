@@ -15,7 +15,7 @@
       <td class="row1"><%= link_to "Download unclaimed codes",
         "/#{params[:controller]}/download_codes", id: "download_codes" %></td>
       <td class="row1"><%= link_to "Remove unclaimed codes",
-        "/#{params[:controller]}/remove_codes", id: "remove_unclaimed_codes",
+        "/#{params[:controller]}/remove_unclaimed_codes", id: "remove_unclaimed_codes",
         data: { confirm: 'Are you sure?' } %></td>
     <% end %>
   </tr>

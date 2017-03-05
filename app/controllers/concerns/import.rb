@@ -36,22 +36,21 @@ module Import
     end
   end
   
-  def remove_codes
-    flag = offeror_codes.where(:user_id => nil)
-    if flag.count == 0
+  def remove_unclaimed_codes
+    if offeror_codes.where(user_id: nil).count.zero?
       redirect_to "/#{params[:controller]}/home",
         :flash => { :error => "There are no unclaimed codes" }
     else
       # contents = Offeror.remove_codes(current_offeror)
       # send_data contents, :filename => "unclaimed_codes.txt"
-      Offeror.remove_codes(current_offeror)
+      current_offeror.remove_unclaimed_codes(offeror_codes)
       redirect_to "/#{params[:controller]}/home",
         :flash => { :notice => "Codes were removed" }
     end
   end
   
   def download_codes
-    unclaimed_codes = Offeror.download_codes(current_offeror)
+    unclaimed_codes = current_offeror.download_codes(offeror_codes)
     send_data(unclaimed_codes, filename: "unclaimed_codes.txt")
   end
   
@@ -66,7 +65,7 @@ module Import
     else
       current_offeror.update_attribute(:history, nil)
       redirect_to "/#{params[:controller]}/home",
-        notice: "History was cleared"
+        :flash => { :notice => "History was cleared" }
     end
   end
 end

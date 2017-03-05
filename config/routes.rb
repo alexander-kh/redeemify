@@ -54,7 +54,7 @@ Auth::Application.routes.draw do
     collection do
       post :import
       post :update_profile
-      get :remove_codes
+      get :remove_unclaimed_codes
       get :download_codes
     end
     resources :vendorcodes
@@ -64,7 +64,7 @@ Auth::Application.routes.draw do
     collection do
       post :import
       post :update_profile
-      get :remove_codes
+      get :remove_unclaimed_codes
       get :download_codes
     end
     resources :redeemifycodes
