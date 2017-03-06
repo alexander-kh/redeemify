@@ -32,7 +32,7 @@ class VendorsController < ApplicationController
       :email => current_vendor.email)
     end
     session[:user_id] = current_user.id
-    if current_user.code == nil 
+    if current_user.code.nil?
       redirect_to '/sessions/new', notice: "Changed to user account"
     else
       redirect_to '/sessions/customer', notice: "Changed to user account"

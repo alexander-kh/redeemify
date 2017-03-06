@@ -31,7 +31,10 @@ class SessionsController < ApplicationController
 
   def customer
     if session[:user_id]
-      if current_user.code.nil?
+      # <User id: 1, provider: "google_oauth2", uid: "uid", name: "Alexander",
+      # created_at: "2017-03-06 09:38:42", updated_at: "2017-03-06 09:49:22",
+      # code: "yyyyy", email: "khlipun@gmail.com"> 
+      if current_user.code.nil? # false in our case
         unless RedeemifyCode.serve(current_user, params[:code])
           flash.now[:error] = 
             'Your code is either invalid or has been redeemed already.
@@ -39,6 +42,7 @@ class SessionsController < ApplicationController
           render :new ; return
         end
       end
+      # this one
       set_vendor_code(current_user)
     end
     if session[:vendor_id].present?
@@ -93,6 +97,7 @@ class SessionsController < ApplicationController
 		@current_code = current_user.code
 		vendors = Vendor.all
 		vendors.each do |vendor|
+		  # vendor_code = 
 			vendor_code = vendor.serve_code(current_user)
 			flash.now[:alert] = 'Some offers are not available at this time,
 				please come back later' unless vendor_code

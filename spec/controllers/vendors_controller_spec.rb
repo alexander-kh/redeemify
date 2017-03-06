@@ -197,4 +197,23 @@ describe VendorsController do
       expect(flash[:notice]).to eq("History was cleared")
     end
   end
+  
+  describe "GET #change_to_user" do
+    before do
+      @vendor = create(:vendor)
+    end
+    it "redirects to new session page when redeemify code is not presented" do
+      allow(controller).to receive(:current_vendor).and_return(@vendor)
+      get :change_to_user
+      expect(response).to redirect_to('/sessions/new')
+      expect(flash[:notice]).to eq("Changed to user account")
+    end
+    it "redirects to customer's page when user has redeemify code" do
+      @user = create(:user, code: "12345")
+      allow(controller).to receive(:current_vendor).and_return(@user)
+      get :change_to_user
+      expect(response).to redirect_to('/sessions/customer')
+      expect(flash[:notice]).to eq("Changed to user account")
+    end
+  end
 end

@@ -22,9 +22,9 @@ class Vendor < ActiveRecord::Base
 			self.vendorCodes.where(user_id: nil).first
 		unless code.nil?
 			if code.user_id.nil? && self.vendorCodes.find_by(user_id: user.id).nil?
-				code.assign_to user
+				code.associate_with(user)
 			end
 		end
-		code
+		return code
 	end
 end
