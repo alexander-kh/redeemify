@@ -22,9 +22,9 @@
   <% if current_vendor %>
     <tr>
       <td class="row1"><%= link_to "Update profile",
-        '/vendors/profile' %></td>
+        '/vendors/profile', id: "update_profile" %></td>
       <td class="row1"><%= link_to "Change to user",
-        '/vendors/change_to_user' %></td>
+        '/vendors/change_to_user', id: "change_to_user" %></td>
     </tr>
   <% end %>
 </table>

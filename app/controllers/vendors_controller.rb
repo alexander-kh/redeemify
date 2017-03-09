@@ -27,9 +27,8 @@ class VendorsController < ApplicationController
     current_user = User.find_by_provider_and_email(current_vendor.provider,
                     current_vendor.email)
     if current_user.nil?
-     current_user =  User.create!(:provider => current_vendor.provider,
-      :uid => current_vendor.uid, :name => current_vendor.name,
-      :email => current_vendor.email)
+      current_user =  User.create!(provider: current_vendor.provider,
+        uid: current_vendor.uid, name: current_vendor.name, email: current_vendor.email)
     end
     session[:user_id] = current_user.id
     if current_user.code.nil?

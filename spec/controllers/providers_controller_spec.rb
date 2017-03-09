@@ -146,7 +146,7 @@ describe ProvidersController do
     before do
       @provider = create(:provider)
     end
-    it "displayes the error message when history is empty" do
+    it "displays the error message when history is empty" do
       @provider.history = nil
       allow(controller).to receive(:current_provider).and_return(@provider)
       get :clear_history

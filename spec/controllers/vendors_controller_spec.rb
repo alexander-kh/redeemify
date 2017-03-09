@@ -209,8 +209,8 @@ describe VendorsController do
       expect(flash[:notice]).to eq("Changed to user account")
     end
     it "redirects to customer's page when user has redeemify code" do
-      @user = create(:user, code: "12345")
-      allow(controller).to receive(:current_vendor).and_return(@user)
+      user = create(:user, code: "12345")
+      allow(controller).to receive(:current_vendor).and_return(user)
       get :change_to_user
       expect(response).to redirect_to('/sessions/customer')
       expect(flash[:notice]).to eq("Changed to user account")
