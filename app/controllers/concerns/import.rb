@@ -41,8 +41,6 @@ module Import
       redirect_to "/#{params[:controller]}/home",
         :flash => { :error => "There are no unclaimed codes" }
     else
-      # contents = Offeror.remove_codes(current_offeror)
-      # send_data contents, :filename => "unclaimed_codes.txt"
       current_offeror.remove_unclaimed_codes(offeror_codes)
       redirect_to "/#{params[:controller]}/home",
         :flash => { :notice => "Codes were removed" }

@@ -64,9 +64,6 @@ class SessionsController < ApplicationController
     session.delete(:user_id)
     session.delete(:vendor_id)
     session.delete(:provider_id)
-    # session[:user_id] = nil
-    # session[:vendor_id] = nil
-    # session[:provider_id] = nil
     gon.clear
     redirect_to root_url, notice: "Signed out!"
   end

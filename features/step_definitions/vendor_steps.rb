@@ -1,6 +1,6 @@
 Given /^(?:|I (?:am |have ))(?:logging|signed) in through OAuth as a vendor(?:| "(.*)")$/ do |vendor|
   v = Vendor.find_by_name("#{vendor}") || Vendor.create(name: "GitHub",
-        provider: "github", email: "test@github.com", cashValue: "$10")
+        provider: "github", uid: "uid", email: "test@github.com", cashValue: "$10")
   visit(root_path)
   disable_test_omniauth()
   set_omniauth_vendor(v)
@@ -84,15 +84,15 @@ end
 
 
 Then /^(?:|I )should see option to log in as a user$/ do
-  page.should have_content('Login as a user')
+  page.should have_content('Change to user')
 end
 
 When /^(?:|I )follow the link to (.*)$/ do |action|
   case action
-    when 'log in as a user'
-      click_link('user-login')
-    when 'log in as a vendor'
-      click_link('vendor-login')
+    when 'switch to user account'
+      click_link('change_to_user')
+    when 'switch to vendor account'
+      click_link('change_to_vendor')
     when 'remove unclaimed codes'
       click_link('remove_unclaimed_codes')
     when 'clear history'
@@ -106,4 +106,8 @@ end
 
 Then /^(?:|I )should see message about successful removing of history$/ do
   page.should have_content('History was cleared')
+end
+
+And /^(?:|I )should see form to enter the code$/ do
+  page.should have_content('Redeem your code!')
 end
