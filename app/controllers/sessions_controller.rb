@@ -7,19 +7,12 @@ class SessionsController < ApplicationController
   end
 
   def create
-    auth = request.env["omniauth.auth"]
-    
-    offeror = Provider.find_by_provider_and_email(auth["provider"], 
-      auth["info"]["email"]) || Vendor.find_by_provider_and_email(
-      auth["provider"], auth["info"]["email"])
-    
     if offeror.present?
       log_in(offeror)
-      redirect_to "/#{offeror.class.to_s.downcase}s/home",
+      redirect_to "/#{offeror.class.to_s.downcase.pluralize}/home",
         notice: "Welcome, #{offeror.name}"
     else
-      user = User.find_by_provider_and_email(auth["provider"], auth["uid"]) ||
-        User.create_with_omniauth(auth)
+      user = find_or_create_user
       log_in(user)
       if user.code.present?
         redirect_to '/sessions/customer'
@@ -28,12 +21,9 @@ class SessionsController < ApplicationController
       end
     end
   end
-
+  
   def customer
     if session[:user_id]
-      # <User id: 1, provider: "google_oauth2", uid: "uid", name: "Alexander",
-      # created_at: "2017-03-06 09:38:42", updated_at: "2017-03-06 09:49:22",
-      # code: "yyyyy", email: "khlipun@gmail.com"> 
       if current_user.code.nil? # false in our case
         unless RedeemifyCode.serve(current_user, params[:code])
           flash.now[:error] = 
@@ -58,7 +48,6 @@ class SessionsController < ApplicationController
       current_user.anonymize!
       RedeemifyCode.anonymize! current_user
       VendorCode.anonymize_all! current_user
-      
       session.delete(:user_id)
       redirect_to root_url, notice: "Your account has been deleted"
     end
@@ -82,12 +71,24 @@ class SessionsController < ApplicationController
   end
 
   private
-  
+
+  def offeror
+    auth = request.env["omniauth.auth"]
+    Provider.find_by_provider_and_email(auth["provider"], auth["info"]["email"]) || 
+    Vendor.find_by_provider_and_email(auth["provider"], auth["info"]["email"])
+  end
+
   def log_in(user)
     key = "#{user.class.to_s.downcase}_id".to_sym
     session[key] = user.id
   end
-  
+
+  def find_or_create_user
+    auth = request.env["omniauth.auth"]
+    User.find_by_provider_and_uidl(auth["provider"], auth["uid"]) ||
+    User.create_with_omniauth(auth)
+  end
+
 	def set_vendor_code(current_user)
 		@list_codes, @instruction, @description, @help, @expiration, @website,
 		@cash_value, @total = {}, {}, {}, {}, {}, {}, {}, 0
