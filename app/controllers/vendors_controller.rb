@@ -2,7 +2,8 @@ require 'rubygems'
 require 'google_chart'
 
 class VendorsController < ApplicationController
-  include Import
+  include OfferorActions
+  before_action :require_login
 
   def index
   end
@@ -34,7 +35,7 @@ class VendorsController < ApplicationController
     if current_user.code.nil?
       redirect_to '/sessions/new', notice: "Changed to user account"
     else
-      redirect_to '/sessions/customer', notice: "Changed to user account"
+      redirect_to '/sessions/customer'
     end
   end
 end

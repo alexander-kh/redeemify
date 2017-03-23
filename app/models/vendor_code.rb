@@ -9,7 +9,10 @@ class VendorCode < ActiveRecord::Base
 	
   def associate_with(user)
     self.update(user_id: user.id, user_name: user.name, email: user.email)
-  end  
+    vendor = self.vendor
+    vendor.update_attribute(:usedCodes, vendor.usedCodes + 1)
+    vendor.update_attribute(:unclaimCodes, vendor.unclaimCodes - 1)
+  end
 
   def self.anonymize_all!(myUser)
     vCodes = where user: myUser

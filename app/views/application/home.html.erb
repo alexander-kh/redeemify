@@ -13,7 +13,8 @@
     <% end %>
     <% if current_offeror.unclaimCodes > 0 %>
       <td class="row1"><%= link_to "Download unclaimed codes",
-        "/#{params[:controller]}/download_codes", id: "download_codes" %></td>
+        "/#{params[:controller]}/download_unclaimed_codes",
+        id: "download_unclaimed_codes" %></td>
       <td class="row1"><%= link_to "Remove unclaimed codes",
         "/#{params[:controller]}/remove_unclaimed_codes", id: "remove_unclaimed_codes",
         data: { confirm: 'Are you sure?' } %></td>

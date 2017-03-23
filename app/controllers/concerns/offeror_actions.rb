@@ -1,4 +1,4 @@
-module Import
+module OfferorActions
   
   def upload_page
   end
@@ -47,8 +47,8 @@ module Import
     end
   end
   
-  def download_codes
-    unclaimed_codes = current_offeror.download_codes(offeror_codes)
+  def download_unclaimed_codes
+    unclaimed_codes = current_offeror.download_unclaimed_codes(offeror_codes)
     send_data(unclaimed_codes, filename: "unclaimed_codes.txt")
   end
   
@@ -64,6 +64,14 @@ module Import
       current_offeror.update_attribute(:history, nil)
       redirect_to "/#{params[:controller]}/home",
         :flash => { :notice => "History was cleared" }
+    end
+  end
+  
+  private
+
+  def require_login
+    unless current_offeror
+      redirect_to '/' and return
     end
   end
 end

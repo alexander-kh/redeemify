@@ -33,18 +33,18 @@ describe SessionsController do
   end
 
 
-  describe "POST #create" do
+  describe "#create" do
     it "should successfully create a user" do
       expect {
         post :create, provider: :amazon
       }.to change{ User.count }.by(1)
     end
-
     it "should successfully create a session" do
       expect(session[:user_id]).to be_nil
       post :create, provider: :amazon
       get :customer
       expect(session[:user_id]).not_to be_nil
+      # session[:user_id].should ==
     end
 
     it "renders the about template" do
@@ -66,13 +66,10 @@ describe SessionsController do
     end
   end
 
-  describe "GET #customer" do
+  describe "#customer" do
     it "should redirect the user to the customer page" do
-      v = Vendor.create!(name: "thai", uid: "54321", provider: "amazon")
-      v.history = "April 3rd, 2015 23:51\tComment\t05/02/2015\t2\n"
-      v.save!
-      a = v.vendorCodes.create!(:code => "123", :vendor => v)
-      a.save!
+      user = create(:user, code: '12345')
+      allow(controller).to receive(:current_user).and_return(user)
       get :customer
       expect(response).to render_template :customer
     end

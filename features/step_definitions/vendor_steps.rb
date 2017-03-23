@@ -100,7 +100,7 @@ When /^(?:|I )follow the link to (.*)$/ do |action|
     when 'view uploaded codes'
       click_link('view_codes')
     when 'download unclaimed codes'
-      click_link('download_codes')
+      click_link('download_unclaimed_codes')
   end
 end
 

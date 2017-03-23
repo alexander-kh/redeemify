@@ -21,6 +21,12 @@ end
       expect(@vCode.user_name).to eq(@user.name)
       expect(@vCode.email).to eq(@user.email)
     end
+    
+    it 'updates vendor usedCodes and unclaimCodes attributes' do
+      @vCode.associate_with(@user)
+      expect{@vCode.associate_with(@user)}.to change{@vendor.usedCodes}.by(1)
+      expect{@vCode.associate_with(@user)}.to change{@vendor.unclaimCodes}.by(-1)
+    end    
   end
   
   describe "VendorCode.anonymize_all" do

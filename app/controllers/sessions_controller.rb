@@ -1,5 +1,6 @@
 class SessionsController < ApplicationController
-  
+  before_action :require_login, except: [:new, :create]
+
   def new
     if session[:vendor_id].present?
       @vendor_user = session[:vendor_id]
@@ -24,7 +25,7 @@ class SessionsController < ApplicationController
   
   def customer
     if session[:user_id]
-      if current_user.code.nil? # false in our case
+      if current_user.code.nil?
         unless RedeemifyCode.serve(current_user, params[:code])
           flash.now[:error] = 
             'Your code is either invalid or has been redeemed already.
@@ -32,7 +33,6 @@ class SessionsController < ApplicationController
           render :new ; return
         end
       end
-      # this one
       set_vendor_code(current_user)
     end
     if session[:vendor_id].present?
@@ -71,7 +71,13 @@ class SessionsController < ApplicationController
   end
 
   private
-
+  
+  def require_login
+    unless current_user
+      redirect_to '/' and return
+    end
+  end
+  
   def offeror
     auth = request.env["omniauth.auth"]
     Provider.find_by_provider_and_email(auth["provider"], auth["info"]["email"]) || 
@@ -85,30 +91,26 @@ class SessionsController < ApplicationController
 
   def find_or_create_user
     auth = request.env["omniauth.auth"]
-    User.find_by_provider_and_uidl(auth["provider"], auth["uid"]) ||
+    User.find_by_provider_and_uid(auth["provider"], auth["uid"]) ||
     User.create_with_omniauth(auth)
   end
-
-	def set_vendor_code(current_user)
-		@list_codes, @instruction, @description, @help, @expiration, @website,
-		@cash_value, @total = {}, {}, {}, {}, {}, {}, {}, 0
-		@current_code = current_user.code
-		vendors = Vendor.all
-		vendors.each do |vendor|
-		  # vendor_code = 
-			vendor_code = vendor.serve_code(current_user)
-			flash.now[:alert] = 'Some offers are not available at this time,
-				please come back later' unless vendor_code
-			@list_codes[vendor.name] ||= 
-			  vendor_code ? vendor_code.code : 'Not available'
-			@instruction[vendor.name] ||= vendor.instruction
-			@help[vendor.name] ||= vendor.helpLink
-			@expiration[vendor.name] ||= vendor.expiration
-			@website[vendor.name] ||= vendor.website
-			@cash_value[vendor.name] ||= vendor.cashValue
-			@description[vendor.name] ||= vendor.description
-			@total += vendor.cashValue.gsub(/[^0-9\.]/,'').to_f
-			@total = @total.round(2)
-		end
-	end
+  
+  def set_vendor_code(current_user)
+    set_instance_variables
+    Vendor.all.each do |vendor|
+      vendor_code = vendor.serve_code(current_user)
+      flash.now[:alert] = t('missing_offer') unless vendor_code
+      @codes[vendor.name] ||= vendor_code ? vendor_code.code : 'Not available'
+      vendor.attributes.slice('cashValue', 'expiration', 'description',
+        'instruction', 'website', 'helpLink').each { 
+          |key, value| instance_variable_get("@#{key}")[vendor.name] ||= value }
+      @total += vendor.cashValue.gsub(/[^0-9\.]/,'').to_f.round(2)
+    end
+  end
+  
+  def set_instance_variables
+    @codes, @instruction, @description, @helpLink, @expiration, @website,
+    @cashValue, @total = {}, {}, {}, {}, {}, {}, {}, 0
+    @current_code = current_user.code
+  end
 end

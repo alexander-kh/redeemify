@@ -39,7 +39,7 @@ module Offeror
     self.update(unclaimCodes: 0, removedCodes: self.removedCodes + @num)
   end
   
-  def download_codes(offeror_codes)
+  def download_unclaimed_codes(offeror_codes)
     @unclaimed_codes = offeror_codes.where(user_id: nil)
     @num = self.unclaimCodes
     @date = Time.now.to_formatted_s(:long_ordinal)
