@@ -91,7 +91,6 @@ describe VendorsController do
     end
     
     it "redirects to the home page and notifies user of codes successfully uploaded" do
-
       allow(@vendor).to receive(:import).and_return(@hash)
       post :import, file: !nil
       expect(response).to redirect_to(:vendors_home)
@@ -99,7 +98,6 @@ describe VendorsController do
     end
     
     it "calls #validation_errors_content to generate report content" do
-
       allow(@vendor).to receive(:import).and_return(@err_hash)
       expect(controller).to receive(:validation_errors_content).with(@err_hash)
       post :import, file: !nil
