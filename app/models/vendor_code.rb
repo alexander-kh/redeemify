@@ -7,6 +7,7 @@ class VendorCode < ActiveRecord::Base
   validates :code, presence: true,  uniqueness: {message: "already registered"},
                    length: { maximum: 255, message: "longer than 255 characters" }
 	
+	
   def associate_with(user)
     self.update(user_id: user.id, user_name: user.name, email: user.email)
     update_codes_statistics(self.vendor)
