@@ -49,8 +49,13 @@ module Offeror
     end
     return @contents
   end
-
+  
   private
+  
+  def update_codes_statistics(offeror)
+    offeror.update(usedCodes: offeror.usedCodes + 1,
+      unclaimCodes: offeror.unclaimCodes - 1)
+  end
   
   def file_check(file_path)
     return "Wrong file format! Please upload '.txt' file" unless file_path =~/.txt$/
