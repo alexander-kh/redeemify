@@ -1,7 +1,7 @@
 require 'rails_helper'
-require 'spec_helper'
 
 describe Admin::AdminUsersController do
+  include Devise::Test::ControllerHelpers
   render_views
   
   before do
