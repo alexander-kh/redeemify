@@ -5,8 +5,8 @@ describe Admin::AdminUsersController do
   render_views
   
   before do
-    admin = create(:admin_user)
-    sign_in(admin)
+    @admin = create(:admin_user)
+    sign_in(@admin)
   end
   
   describe "GET #index" do
@@ -20,6 +20,22 @@ describe Admin::AdminUsersController do
     it "creates new admin" do
       expect{ post :create, admin_user: { email: "new_admin@redeemify.com",
         password: "password" } }.to change{ AdminUser.count }.by(1)
+    end
+  end
+  
+  describe "GET #update" do
+    it "allows edit admin details" do
+      get :edit, { id: @admin }
+      expect(response).to render_template(:edit)
+    end
+  end
+  
+  describe "PATCH #update" do
+    it "updates admin details" do
+      patch :update, { id: @admin,
+        admin_user: { email: "admin@strawberrycanyon.com" } }
+      @admin.reload
+      expect(@admin.email).to eq("admin@strawberrycanyon.com")
     end
   end
 end
