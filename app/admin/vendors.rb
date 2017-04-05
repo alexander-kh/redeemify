@@ -17,20 +17,5 @@ ActiveAdmin.register Vendor do
     actions
   end
   config.filters = false
-
-  form do |f|
-    f.inputs "Vendor Details" do
-      f.input :name
-      f.input :email
-      f.input :provider, label: 'Log in through', :as => :select, 
-        :collection => { :Amazon => "amazon", :Google => "google_oauth2",
-        :GitHub => "github", :Twitter => "twitter", :Facebook => "facebook" }
-      f.input :cash_value
-      f.input :expiration
-      f.input :description
-      f.input :website
-      f.input :help_link
-    end
-    f.actions
-  end
+  form partial: '/admin/form'
 end

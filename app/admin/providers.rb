@@ -1,7 +1,7 @@
 ActiveAdmin.register Provider do
   menu :priority => 3
   permit_params :name, :email, :provider
-  
+
   index do
     column :name
     column :created_at
@@ -13,15 +13,5 @@ ActiveAdmin.register Provider do
     actions
   end
   config.filters = false
-
-  form do |f|
-    f.inputs "Provider Details" do
-      f.input :name
-      f.input :email
-      f.input :provider, label: 'Log in through', :as => :select,
-        :collection => { :Amazon => "amazon", :Google => "google_oauth2",
-          :GitHub => "github", :Twitter => "twitter", :Facebook => "facebook" }
-    end
-    f.actions
-  end
+  form partial: 'admin/form'
 end
