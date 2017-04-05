@@ -6,7 +6,7 @@ describe Admin::VendorCodesController do
   
   before do
     @admin = create(:admin_user)
-    @vendor_code = create(:vendor_code)
+    @vendor_code = VendorCode.create!(code: "0001")
     sign_in(@admin)
   end
   
@@ -22,7 +22,7 @@ describe Admin::VendorCodesController do
     it "shows vendor code details" do
       get :show, id: @vendor_code
       expect(response).to render_template(:show)
-      expect(response.body).to have_content("0002")
+      expect(response.body).to have_content("0001")
     end
   end
   

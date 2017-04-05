@@ -6,7 +6,7 @@ describe Admin::RedeemifyCodesController do
   
   before do
     @admin = create(:admin_user)
-    @redeemify_code = create(:redeemify_code)
+    @redeemify_code = RedeemifyCode.create!(code: "0001")
     sign_in(@admin)
   end
   
@@ -22,7 +22,7 @@ describe Admin::RedeemifyCodesController do
     it "shows redeemify code details" do
       get :show, id: @redeemify_code
       expect(response).to render_template(:show)
-      expect(response.body).to have_content("0002")
+      expect(response.body).to have_content("0001")
     end
   end
   
