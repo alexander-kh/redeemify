@@ -4,7 +4,7 @@
     <%= f.input :email %>
     <%= f.input :provider, label: 'Log in through', :as => :select,
       :collection => { :Amazon => "amazon", :Google => "google_oauth2",
-        :GitHub => "github", :Twitter => "twitter", :Facebook => "facebook" } %>
+        :GitHub => "github_oauth2", :Twitter => "twitter", :Facebook => "facebook" } %>
     <% if resource.is_a? Vendor %>
       <%= f.input :cash_value %>
       <%= f.input :expiration %>
