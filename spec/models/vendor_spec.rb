@@ -20,9 +20,9 @@ RSpec.describe Vendor, :type => :model do
       (1..3).each do |i| 
         @vendor.vendorCodes.create code: "000" + i.to_s,
           user: FactoryGirl.create(:user, email: "email_#{i}@domain.com")
-      end
+      end  
       @myUser = FactoryGirl.create :user
-    end
+    end  
     
     it "serves vendor code for new user" do
       expect(@vendor.serve_code @myUser).to be_truthy

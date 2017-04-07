@@ -36,16 +36,12 @@ group :development, :test do
   gem 'factory_girl_rails'
   gem 'guard-rspec'
   gem 'rspec-rails', '~> 3.0'
+  gem 'simplecov'
   gem 'test-unit'
   gem 'irbtools-more', require: 'irbtools/binding'
   gem 'byebug'
   gem 'meta_request' #to enable RailsPanel plugin in Chrome
   gem 'cucumber-api-steps', :require => false
-end
-
-group :test do
-  gem "simplecov"
-  gem "codeclimate-test-reporter", "~> 1.0.0"
 end
 
 group :development do
