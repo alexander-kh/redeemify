@@ -4,6 +4,9 @@ require 'rails_helper'
 describe UsersController do
 end
 
+describe UsersController do
+end
+
 # RSpec.describe Api::V1::UsersController do
 #   describe "GET /api/users/:id" do
 
