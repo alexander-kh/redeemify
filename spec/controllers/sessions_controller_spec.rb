@@ -33,7 +33,7 @@ describe SessionsController do
   end
 
 
-  describe "#create" do
+  describe "POST #create" do
     it "should successfully create a user" do
       expect {
         post :create, provider: :amazon
@@ -44,20 +44,17 @@ describe SessionsController do
       post :create, provider: :amazon
       get :customer
       expect(session[:user_id]).not_to be_nil
-      # session[:user_id].should ==
     end
-
     it "renders the about template" do
       get :new
       expect(response).to render_template :new
     end
-
     it "should redirect the user to the root url/new page" do
       post :create, provider: :amazon
       expect(flash[:notice]).to eq("Signed in!")
       expect(response).to redirect_to '/sessions/new'
     end
-    
+
     it "should redirect registered user to the offers page" do
       user = create(:user, code: "12345")
       allow(User).to receive(:create_with_omniauth).and_return(user)
@@ -66,7 +63,7 @@ describe SessionsController do
     end
   end
 
-  describe "#customer" do
+  describe "GET #customer" do
     it "should redirect the user to the customer page" do
       user = create(:user, code: '12345')
       allow(controller).to receive(:current_user).and_return(user)

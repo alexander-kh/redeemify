@@ -7,7 +7,7 @@ ActiveAdmin.register Provider do
     column :created_at
     column :email
     column "# Used Codes", :used_codes
-    column "# Unclaimed Codes", :unclaimed_codes
+    column "# Unclaim Codes", :unclaimed_codes
     column "# Uploaded Codes", :uploaded_codes
     column "# Removed Codes", :removed_codes
     actions
