@@ -1,0 +1,42 @@
+.customer_notice {
+  color:#757575;
+  text-align: center;
+  font-weight: 900;
+  line-height: 2.5;
+}
+
+.redeemify-card-square {
+  text-align: center;
+  display: block;
+  margin: 50px auto 25px;
+}
+
+.flex-container {
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.flex-item {
+  margin-top: 2.5em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.offer {
+  width: 330px;
+  table-layout: fixed;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.delete-account {
+  font-size: 1em;
+  font-weight: 900;
+  margin: 25px auto 5px;
+}
+
+.bin-icon {
+  margin: 1em auto;
+}
