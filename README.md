@@ -1,5 +1,6 @@
 [![Code Climate](https://codeclimate.com/github/alexander-kh/redeemify/badges/gpa.svg)](https://codeclimate.com/github/alexander-kh/redeemify)
 [![Issue Count](https://codeclimate.com/github/alexander-kh/redeemify/badges/issue_count.svg)](https://codeclimate.com/github/alexander-kh/redeemify)
+[![Test Coverage](https://codeclimate.com/github/strawberrycanyon/redeemify/badges/coverage.svg)](https://codeclimate.com/github/strawberrycanyon/redeemify/coverage)
 [![Test Coverage](https://codeclimate.com/github/alexander-kh/redeemify/badges/coverage.svg)](https://codeclimate.com/github/alexander-kh/redeemify/coverage)
 
 # Redeemify: let users redeem "bundles" of offers
